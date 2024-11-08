@@ -1,1 +1,6 @@
-{}
+{
+  "1": [
+    { "productId": 101, "quantity": 2 },
+    { "productId": 102, "quantity": 1 }
+  ]
+}
