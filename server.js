@@ -5,6 +5,9 @@ const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 
+// middleware
+app.use(bodyParser.json()); // Parse JSON bodies
+
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
