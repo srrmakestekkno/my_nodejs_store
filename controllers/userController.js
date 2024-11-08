@@ -1,22 +1,35 @@
+const fs = require("fs").promises;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-// TODO put it in a file
-const mockedUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    password: bcrypt.hashSync("password123", 10),
-  },
-];
-
+const USERS_FILE = "./data/users.json";
 const JWT_SECRET = "secret";
 
-exports.login = (req, res) => {
-  const { email, mpassword } = req.body;
+const readUsersFromFile = async () => {
+  try {
+    const data = await fs.readFile(USERS_FILE, "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("Error reading users file:", err);
+    return [];
+  }
+};
 
-  const user = mockedUsers.find((u) => u.email === email);
+const saveUsersToFile = async (users) => {
+  try {
+    await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (err) {
+    console.error("Error writing to users file:", err);
+  }
+};
+
+// authenticate the user and send jwt
+exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  const users = readUsersFromFile();
+  const user = users.find((u) => u.email === email);
+
   if (!user) return res.status(400).json({ message: "User not found" });
 
   const isMatch = bcrypt.compareSync(password, user.password);
